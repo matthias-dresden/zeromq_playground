@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package energy;
+
+message Status {
+  string id = 1;
+  bool available = 2;
+  int32 clientsConnected = 3;
+
+  enum PowerType {
+    SOLAR = 0;
+    WIND = 1;
+    GAS = 2;
+  }
+
+  PowerType powerType = 4;
+
+  message ContactDetails {
+    string address = 1;
+  }
+
+  repeated ContactDetails contactDetails = 5;
+}
+
+message StatusSet {
+  repeated Status status = 1;
+}
