@@ -8,12 +8,20 @@
 
 using namespace std;
 
+energy::Status getRandomStatus( int i) {
+	energy::Status status;
+
+	status.set_available( true);
+	status.set_id( "mynonrandom_Id" + to_string(i));
+	status.set_powertype( energy::Status_PowerType_GAS);
+
+	return status;
+}
+
+
 int main(void) {
 	cout << "Starting the Client..." << endl;
 
-	GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-	energy::Status status;
 
 	zmq::context_t zmqContext( 1);
 
@@ -24,8 +32,10 @@ int main(void) {
 	int i = 0;
 
 	while( i++ < 10000) {
+		energy::Status status = getRandomStatus( i);
+
 		sendMultipartZmqMessage( clientSocket, "");
-		sendZmqMessage( clientSocket, "i am working " + to_string( i));
+		sendZmqMessage( clientSocket, status.SerializeAsString());
 
 		string receivedMsg = receiveZmqMessage( clientSocket);
 		cout << "server says: " << receivedMsg << endl;

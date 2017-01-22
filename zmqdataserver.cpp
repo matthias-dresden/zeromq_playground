@@ -11,8 +11,6 @@ using namespace std;
 int main(void) {
 	cout << "Starting the Server..." << endl;
 
-	GOOGLE_PROTOBUF_VERIFY_VERSION;
-
 	energy::Status status;
 
 	zmq::context_t zmqContext( 1);
@@ -26,11 +24,13 @@ int main(void) {
 	while( i++ < 10000) {
 		std::string identity = receiveZmqMessage( serverSocket);
 		cout << "received identity " << identity << endl;
-		for( int k = 0; k< 2; k++) {
-			cout << "now receiving part " << k << endl;
-			string receivedMsg = receiveZmqMessage( serverSocket);
-			cout << "received part " << k <<": " << receivedMsg << endl;
-		}
+		string envelope = receiveZmqMessage( serverSocket);
+
+		string payload = receiveZmqMessage( serverSocket);
+		energy::Status status;
+		status.ParseFromString( payload);
+
+		cout << "received id " << status.id() << endl;
 
 		sendMultipartZmqMessage( serverSocket, identity);
 		sendMultipartZmqMessage( serverSocket, "");
