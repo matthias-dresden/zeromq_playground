@@ -8,21 +8,21 @@ OBJS =	$(EXE_SRC:.cpp=.o)
 LDFLAGS = -lprotobuf -lzmq 
 
 
-PROTODEF = processdata.proto
-PROTOHEADER = $(PROTODEF:.proto=.pb.h)
-PROTOSOURCE = $(PROTODEF:.proto=.pb.cc)
+PROTODEF = common/processdata.proto
+PROTOHEADER = cpp/$(PROTODEF:.proto=.pb.h)
+PROTOSOURCE = cpp/$(PROTODEF:.proto=.pb.cc)
 PROTOFILES = $(PROTOHEADER) $(PROTOSOURCE)
 
-BUILDDIR = build
+BUILDDIR = buildcpp
 
 EXECUTABLES = $(addprefix $(BUILDDIR)/, $(EXE_SRC:.cpp=))
 
 $(PROTOFILES):
-	protoc --cpp_out=. $^
+	protoc --cpp_out=cpp/ $^
 
 $(EXE_SRC): $(PROTOFILES)
 
-$(BUILDDIR)/%:	%.o $(PROTOSOURCE)
+$(BUILDDIR)/%:	cpp/%.o $(PROTOSOURCE)
 	mkdir -p $(BUILDDIR)
 	$(CXX) -o $@ $^ $(LIBS) $(LDFLAGS)
 
