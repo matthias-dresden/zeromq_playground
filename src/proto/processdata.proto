@@ -17,6 +17,7 @@ message Status {
 
   message ContactDetails {
     string address = 1;
+	string nick = 2;
   }
 
   repeated ContactDetails contactDetails = 5;
