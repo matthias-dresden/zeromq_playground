@@ -21,20 +21,24 @@ int main(void) {
 
 	int i = 0;
 
-	while( i++ < 10000) {
+	while( true) {
 		std::string identity = receiveZmqMessage( serverSocket);
-		cout << "received identity " << identity << endl;
 		string envelope = receiveZmqMessage( serverSocket);
 
 		string payload = receiveZmqMessage( serverSocket);
 		energy::Status status;
 		status.ParseFromString( payload);
 
-		cout << "received id " << status.id() << endl;
 
 		sendMultipartZmqMessage( serverSocket, identity);
 		sendMultipartZmqMessage( serverSocket, "");
 		sendZmqMessage( serverSocket, "work harder");
+
+		i++;
+
+		if( i%10000 == 0) {
+			cout << "received " << i << " messages" <<endl;
+		}
 
 	}
 	return EXIT_SUCCESS;

@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 
+#include <unistd.h>
+
 #include "zmq_helpers.hpp"
 
 #include "ports.h"
@@ -11,41 +13,44 @@ using namespace std;
 energy::Status getRandomStatus( int i) {
 	energy::Status status;
 
-	status.set_available( true);
-	status.set_id( "mynonrandom_Id" + to_string(i));
+	status.set_available( i%1000 < 500 ? true : false);
+	status.set_id( to_string( getpid()));
 	status.set_powertype( energy::Status_PowerType_GAS);
 
 	return status;
 }
 
 
-int main(void) {
+int main(int argc, char* argv[]) {
 	cout << "Starting the Client..." << endl;
 
+	std::string remoteHost = "localhost";
+
+	if( argc > 1) {
+		remoteHost = argv[ 1];
+	}
 
 	zmq::context_t zmqContext( 1);
 
-	string serverAddress = "tcp://localhost:" + to_string( mainPort);
+	string serverAddress = "tcp://" + remoteHost + ":" + to_string( mainPort);
 	zmq::socket_t clientSocket( zmqContext, ZMQ_DEALER);
 	clientSocket.connect( serverAddress.c_str());
 
 	int i = 0;
 
-	while( i++ < 10000) {
-		energy::Status status = getRandomStatus( i);
+	while( true) {
+
+		energy::Status status = getRandomStatus( i++);
 
 		sendMultipartZmqMessage( clientSocket, "");
 		sendZmqMessage( clientSocket, status.SerializeAsString());
 
 		string receivedMsg = receiveZmqMessage( clientSocket);
-		cout << "server says: " << receivedMsg << endl;
 		receivedMsg = receiveZmqMessage( clientSocket);
-
-		cout << "server says: " << receivedMsg << endl;
 
 		struct timespec t;
 		t.tv_sec = 0;
-		t.tv_nsec = 2 * 1000000;
+		t.tv_nsec = 20 * 1000000;
 		nanosleep (&t, NULL);
 	}
 	return EXIT_SUCCESS;
