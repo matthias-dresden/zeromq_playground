@@ -19,8 +19,12 @@ namespace EnergyStatusServer
 
         private void initRestApi()
         {
-            Get["/"] = _ => "Hello World! " + cache.getSize();
-            Get["/hello"] = _ => "Hello World! " + cache.getSize();
+            Get["/cachesize"] = _ => cache.getSize().ToString(); 
+            Get["/"] = Get["/hello"] = _ => "Hello World! Ask me something";
+            Get["/clients/list"] = _ => String.Join( ", ", cache.getKnownKeys().ToArray());
+            Get["/clients/{id}"] = parameters => 
+            { return "You requested info for " + 
+                parameters.id + ", it is: " + cache.getItem( parameters.id).Available; };
         }
     }
 }

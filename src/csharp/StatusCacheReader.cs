@@ -8,7 +8,10 @@ namespace EnergyStatusServer
 {
     interface StatusCacheReader
     {
-        Energy.Status getItem(byte[] key);
+        Energy.Status getItem(String key);
+
+        List<String> getKnownKeys();
+
         int getSize();
     }
 }

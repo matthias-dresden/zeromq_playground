@@ -47,7 +47,9 @@ namespace EnergyStatusServer
                     var payload = NetMQ.ReceivingSocketExtensions.ReceiveFrameBytes(netMQServer);
                     Energy.Status status = Energy.Status.Parser.ParseFrom(payload);
 
-                    cache.insertItem(identity, status);
+                    var identityString = System.Text.Encoding.Default.GetString(identity);
+
+                    cache.insertItem(status.Id, status);
 
                     //Console.WriteLine(identity + " has sent id " + status.Id);
 

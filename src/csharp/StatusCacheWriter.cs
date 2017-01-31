@@ -8,6 +8,6 @@ namespace EnergyStatusServer
 {
     interface StatusCacheWriter
     {
-        void insertItem(byte[] key, Energy.Status value);
+        void insertItem(String key, Energy.Status value);
     }
 }
